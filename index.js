@@ -8,8 +8,7 @@ class OTPManager {
 
 	generateOTP() {
 		const currentTime = Math.floor(Date.now() / 1000);
-		const timeStep = 1;
-		const counter = Math.floor(currentTime / timeStep);
+		const counter = Math.floor(currentTime / this.timeStep);
 		const counterBuffer = Buffer.alloc(8);
 		counterBuffer.writeUIntBE(counter, 0, 6);
 
@@ -26,8 +25,7 @@ class OTPManager {
 
 	validateOTP(userOTP) {
 		const currentTime = Math.floor(Date.now() / 1000);
-		const timeStep = 1;
-		const counter = Math.floor(currentTime / timeStep);
+		const counter = Math.floor(currentTime / this.timeStep);
 		const counterBuffer = Buffer.alloc(8);
 		counterBuffer.writeUIntBE(counter, 0, 6);
 
