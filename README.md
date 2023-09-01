@@ -1,6 +1,7 @@
 # Dillinger
-## Time-based (TOTP) One-Time Password generator and validator.
-Time-based (TOTP) and HMAC-based (HOTP)  One-Time Password library
+## Time-based (TOTP) and HMAC-based (HOTP)  One-Time Password library
+A small and secure one time password (otp) generator and validator based on crypto.
+
 
 
 ## Installation
