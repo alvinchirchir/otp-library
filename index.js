@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+import { createHmac } from "crypto";
 
 class OTPManager {
 	constructor(secretKey, timeStep) {
@@ -13,7 +13,7 @@ class OTPManager {
 		const counterBuffer = Buffer.alloc(8);
 		counterBuffer.writeUIntBE(counter, 0, 6);
 
-		const hmac = crypto.createHmac("sha1", Buffer.from(this.secretKey, "base64"));
+		const hmac = createHmac("sha1", Buffer.from(this.secretKey, "base64"));
 		hmac.update(counterBuffer);
 		const hmacResult = hmac.digest();
 
@@ -31,7 +31,7 @@ class OTPManager {
 		const counterBuffer = Buffer.alloc(8);
 		counterBuffer.writeUIntBE(counter, 0, 6);
 
-		const hmac = crypto.createHmac("sha1", Buffer.from(this.secretKey, "base64"));
+		const hmac = createHmac("sha1", Buffer.from(this.secretKey, "base64"));
 		hmac.update(counterBuffer);
 		const hmacResult = hmac.digest();
 
