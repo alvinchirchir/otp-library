@@ -43,4 +43,4 @@ class OTPManager {
 	}
 }
 
-module.exports = OTPManager;
+export default OTPManager;

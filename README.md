@@ -1,7 +1,6 @@
-## Time-based (TOTP) and HMAC-based (HOTP)  One-Time Password library
+## Time-based (TOTP) and HMAC-based (HOTP) One-Time Password library
+
 A small and secure one time password (otp) generator and validator based on crypto.
-
-
 
 ## Installation
 
@@ -10,7 +9,7 @@ Requires [Node.js](https://nodejs.org/) v10+ to run.
 Install the dependencies and devDependencies and start the server.
 
 ```sh
-npm install otp-generator-validator --save
+npm install otp-gen-val --save
 ```
 
 ## Usage
@@ -26,6 +25,6 @@ const isValid = otpManager.validateOTP(generatedOTP);
 console.log('Is OTP Valid:', isValid);
 ```
 
-
 ## License
+
 MIT
