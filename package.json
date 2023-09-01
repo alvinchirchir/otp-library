@@ -1,5 +1,5 @@
 {
-	"name": "otp-generator-validator",
+	"name": "otp-library",
 	"version": "1.0.0",
 	"description": "An OTP generator and validator",
 	"main": "index.js",
