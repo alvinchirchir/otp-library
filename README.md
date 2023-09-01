@@ -1,16 +1,30 @@
-
+# Dillinger
 ## Time-based (TOTP) One-Time Password generator and validator.
+A small and secure one time password (otp) generator and validator based on crypto.
 
-const OTPManager = require('./otp-manager');
+## Installation
 
-const secretKey = "BOOM";
+Requires [Node.js](https://nodejs.org/) v10+ to run.
 
-const timeStep = 1; // Adjust the time step interval as needed
+Install the dependencies and devDependencies and start the server.
 
+```sh
+npm install otp-generator-validator --save
+```
+
+## Usage
+
+```sh
+const OTPManager = require('otp-gen-val');
+const secretKey = <YOUR SECRET KEY>;
+const timeStep = 30; // Adjust the time step interval as needed in seconds
 const otpManager = new OTPManager(secretKey, timeStep);
-
 const generatedOTP = otpManager.generateOTP();
 console.log('Generated OTP:', generatedOTP);
-
-const isValid = otpManager.validateOTP(355459);
+const isValid = otpManager.validateOTP(generatedOTP);
 console.log('Is OTP Valid:', isValid);
+```
+
+
+## License
+MIT
