@@ -3,15 +3,19 @@
 	"version": "1.0.4",
 	"description": "An OTP generator and validator",
 	"main": "index.js",
+	"module": "index.mjs",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"type": "module",
 	"keywords": [],
 	"author": "Alvin Kiptoo Chirchir <alvinchirchir1@gmail.com",
 	"license": "ISC",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/alvinchirchir/otp-library"
+	},
+	"dependencies": {
+		"qrcode": "^1.5.3",
+		"thirty-two": "^1.0.2"
 	}
 }
