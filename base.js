@@ -19,18 +19,27 @@ function generateKey(length = 20) {
 }
 
 /**
- * Generates a QR code for a Time-based One-Time Password (TOTP) or Hash Based One-Time Password (HOTP) authentication.
+ * Generates data for a QR code that can be used for OTP (One-Time Password) authentication.
  *
- * @param {string} key - The key key used to generate OTPs.
- * @param {string} issuer - The name of the organization or service providing the OTP.
- * @param {string} label - The label associated with the user's account (e.g., username or email).
- * @param {number} [digits=6] - The number of digits in the generated OTP.
- * @param {string} [algorithm="SHA1"] - The algorithm used to generate the OTP (e.g., "SHA1", "SHA256").
- * @param {number} [period=30] - The time period in seconds for which each OTP is valid.
- * @returns {string} The QR code URL.
- * @throws {Error} If required parameters (key, issuer, or label) are missing.
+ * @param {string} key - The secret key used for OTP generation.
+ * @param {string} issuer - The issuer or service provider's name.
+ * @param {string} label - The label associated with the OTP credential.
+ * @param {number} [digits=6] - The number of digits in the generated OTP code (default is 6).
+ * @param {string} [algorithm="SHA1"] - The hashing algorithm used for OTP generation (default is "SHA1").
+ * @param {number} [period=30] - The time period in seconds for which the OTP code is valid (default is 30 seconds).
+ *
+ * @throws {Error} Throws an error if any of the required parameters (key, issuer, label) are missing.
+ *
+ * @returns {Object} An object containing the following properties:
+ *   - {string} qrData - The data URL of the QR code image containing the OTP credential information.
+ *   - {string} key - The formatted and encoded secret key.
+ *   - {string} issuer - The formatted and encoded issuer name.
+ *   - {string} label - The formatted and encoded label.
+ *   - {string} algorithm - The formatted and encoded hashing algorithm.
+ *   - {string} period - The formatted and encoded time period (in seconds).
+ *   - {string} digits - The formatted and encoded number of digits in the OTP code.
  */
-function generateQRCode(key, issuer, label, digits = 6, algorithm = "SHA1", period = 30) {
+function generateQRData(key, issuer, label, digits = 6, algorithm = "SHA1", period = 30) {
 	// Check if required parameters are provided
 	if (!key) {
 		throw new Error("Missing required parameter: key");
@@ -45,6 +54,7 @@ function generateQRCode(key, issuer, label, digits = 6, algorithm = "SHA1", peri
 	}
 
 	// Encode URL components
+	const formattedKey = encodeURIComponent(key);
 	const formattedIssuer = encodeURIComponent(issuer);
 	const formattedLabel = encodeURIComponent(label);
 	const formattedAlgorithm = encodeURIComponent(algorithm);
@@ -52,10 +62,17 @@ function generateQRCode(key, issuer, label, digits = 6, algorithm = "SHA1", peri
 	const formattedDigits = encodeURIComponent(digits);
 
 	// Construct the final otpauth URL
-	const otpauthURL = `otpauth://totp/${formattedIssuer}:${formattedLabel}?key=${key}&issuer=${formattedIssuer}&label=${formattedLabel}&algorithm=${formattedAlgorithm}&digits=${formattedDigits}&period=${formattedPeriod}`;
-	console.log(otpauthURL);
-	// Generate and return the QR code URL
-	return qrCode.toDataURL(otpauthURL);
+	const otpauthURL = `otpauth://totp/${formattedIssuer}:${formattedLabel}?key=${formattedKey}&issuer=${formattedIssuer}&label=${formattedLabel}&algorithm=${formattedAlgorithm}&digits=${formattedDigits}&period=${formattedPeriod}`;
+	return {
+		qrData: qrCode.toDataURL(otpauthURL),
+		account_name: `${formattedIssuer}:${formattedLabel}`,
+		key: formattedKey,
+		issuer: formattedIssuer,
+		label: formattedLabel,
+		algorithm: formattedAlgorithm,
+		period: formattedPeriod,
+		digits: formattedDigits,
+	};
 }
 
 /**
@@ -113,7 +130,7 @@ function generateOTP(key, type, counter = 30, codeDigits = 6, hmacAlgorithm = "s
  * @throws {Error} If the 'key' parameter is missing, empty, or not a string.
  * @throws {Error} If the 'type' parameter is missing, empty, or not a string.
  */
-function validateOTP(userOTP, key, type, counter = 30, codeDigits = 6, hmacAlgorithm = "sha1", window = 1) {
+function validateOTP(userOTP, key, type='totp', counter = 30, codeDigits = 6, hmacAlgorithm = "sha1", window = 1) {
 	// Check if 'userOTP' parameter is provided, is a string, and is not empty
 	if (!userOTP) {
 		throw new Error("The 'userOTP' parameter is required.");
@@ -163,4 +180,4 @@ function generateHOTP(key, counter, codeDigits = 6, hmacAlgorithm = "sha1") {
 	return paddedHOTP;
 }
 
-module.exports = { generateKey, generateQRCode, generateOTP, validateOTP };
+module.exports = { generateKey, generateQRData, generateOTP, validateOTP };
