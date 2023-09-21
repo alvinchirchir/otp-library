@@ -39,7 +39,7 @@ function generateKey(length = 20) {
  *   - {string} period - The formatted and encoded time period (in seconds).
  *   - {string} digits - The formatted and encoded number of digits in the OTP code.
  */
-function generateQRData(key, issuer, label, digits = 6, algorithm = "SHA1", period = 30) {
+async function generateQRData(key, issuer, label, digits = 6, algorithm = "SHA1", period = 30) {
 	// Check if required parameters are provided
 	if (!key) {
 		throw new Error("Missing required parameter: key");
@@ -62,9 +62,10 @@ function generateQRData(key, issuer, label, digits = 6, algorithm = "SHA1", peri
 	const formattedDigits = encodeURIComponent(digits);
 
 	// Construct the final otpauth URL
-	const otpauthURL = `otpauth://totp/${formattedIssuer}:${formattedLabel}?key=${formattedKey}&issuer=${formattedIssuer}&label=${formattedLabel}&algorithm=${formattedAlgorithm}&digits=${formattedDigits}&period=${formattedPeriod}`;
+	const otpauthURL = `otpauth://totp/${formattedIssuer}:${formattedLabel}?secret=${formattedKey}&issuer=${formattedIssuer}&label=${formattedLabel}&algorithm=${formattedAlgorithm}&digits=${formattedDigits}&period=${formattedPeriod}`;
+
 	return {
-		qrData: qrCode.toDataURL(otpauthURL),
+		qrData: await qrCode.toDataURL(otpauthURL),
 		account_name: `${formattedIssuer}:${formattedLabel}`,
 		key: formattedKey,
 		issuer: formattedIssuer,
@@ -105,7 +106,6 @@ function generateOTP(key, type, counter = 30, codeDigits = 6, hmacAlgorithm = "s
 		return generateHOTP(key, counter, codeDigits, hmacAlgorithm);
 	} else if (type === "totp") {
 		// Generate a TOTP and return it
-		console.log(codeDigits);
 
 		return generateTOTP(key, counter, codeDigits, hmacAlgorithm);
 	} else {
