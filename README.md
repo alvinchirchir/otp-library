@@ -45,82 +45,52 @@ const key = generateKey();//store
 
 Next we will generate the QR data that will be scanned or alternatively if they cannot scan they will enter data that is generated on the authenticator app.
 
-generateQRData(key, issuer, label, [digits = 6], [algorithm = "SHA1"], [period = 30])
-Generates data for a QR code that can be used for OTP (One-Time Password) authentication.
-
-Parameters:
-
-key (string): The secret key used for OTP generation.
-issuer (string): The issuer or service provider's name.
-label (string): The label associated with the OTP credential.
-digits (optional, number): The number of digits in the generated OTP code (default is 6).
-algorithm (optional, string): The hashing algorithm used for OTP generation (default is "SHA1").
-period (optional, number): The time period in seconds for which the OTP code is valid (default is 30 seconds).
-Throws:
-
-Error: Throws an error if any of the required parameters (key, issuer, label) are missing.
-Returns:
-
-An object containing the following properties:
-
-qrData (string): The data URL of the QR code image containing the OTP credential information.
-key (string): The formatted and encoded secret key.
-issuer (string): The formatted and encoded issuer name.
-label (string): The formatted and encoded label.
-algorithm (string): The formatted and encoded hashing algorithm.
-period (string): The formatted and encoded time period (in seconds).
-digits (string): The formatted and encoded number of digits in the OTP code.
-
 ```sh
 
 //CommonJS
 
 const otpManager = require('otp-gen-val');
-const key = otpManager.generateQRData(); //store
+const qrData = otpManager.generateQRData("your_generated_key","your_issuer_i.eg Google","your_account_name i.e admin@xyz.com");
 
 //ES6
 
 import { generateQRData } from 'otp-gen-val';
-const key = generateQRData();//store
-
+const qrObject = generateQRData("your_generated_key","your_issuer_i.eg Google","your_account_name i.e admin@xyz.com");
 
 ```
 
-// Generate a random Base32-encoded key (default length: 20 bytes)
-// Key should be saved in storage because it will be used during validation
-const otpManager = require('otp-gen-val');
+A user can now choose either to scan or enter details manually. If you want a user to scan you can extract qrData from the returned object and render it as follows:
 
-const key = otpManager.generateKey();
+```sh
+<img src="${qrObject.qrData}" alt="${qrObject.label}" />
+```
 
-// Generate OTP data for TOTP (Time-based OTP) and get a QR code data URL
-const otpData = otpManager.generateQRData(key, "MyService", "user@example.com");
+Alternatively you can tell them to enter the details manually as follows:
+Under account name and key that are required by autheticator app they can enter the account name and key fields that are in the return object.
 
-//This will return an object containing qr data
-{
-qrData: qrCode.toDataURL(otpauthURL),
-key: formattedKey,
-issuer: formattedIssuer,
-label: formattedLabel,
-algorithm: formattedAlgorithm,
-period: formattedPeriod,
-digits: formattedDigits,
-}
+### 3. Validate generated OTP
+ Finally we can proceed to validate generated OTP and if it passed we can proceed to allow the user to login/authenticate:
+ 
+ ```sh
+// CommonJS
+const otp = require('otp-gen-val'); // Import the OTP library
 
-//When otpData is generated you can render it on UI as
-//<img src=`${otpData.qrData}` alt=`${otpData.label}` />
+// Validate the OTP
+const userOTP = "entered_otp";
+const secretKey = "generated_key";
+const isValid = otp.validateOTP(userOTP, secretKey);
 
-//The user can then scan the qr code
+console.log(isValid ? "Valid OTP" : "Invalid OTP");
 
-//Alternatively if the user cannot scan you prompt them to enter
+// ES6
+import { validateOTP } from 'otp-gen-val'; // Import the OTP function
 
-// Generate an OTP based on the key and type (hotp or totp)
-// This key will be same as one generated on authenticator app
+// Validate the OTP
+const userOTP = "entered_otp";
+const secretKey = "generated_key";
+const isValid = validateOTP(userOTP, secretKey);
 
-const otp = otpManager.generateOTP(key, "totp");
-
-// Validate a user-provided OTP against expected OTPs generated within a time window preset to 1
-
-const isValid = otpManager.validateOTP(userProvidedOTP, key, "totp");
+console.log(isValid ? "Valid OTP" : "Invalid OTP");
 
 ```
 
@@ -129,10 +99,13 @@ const isValid = otpManager.validateOTP(userProvidedOTP, key, "totp");
 
 We would like to thank the following contributors for their valuable contributions to this project:
 
-- [Contributor 1](https://github.com/contributor1).
+- [Alvin Chirchir](https://github.com/alvinchirchir)
 
-If you would like to contribute to this project, please [fork it on GitHub](https://github.com/your-project/repository) and submit a pull request.
+If you would like to contribute to this project, please [fork it on GitHub](https://github.com/alvinchirchir/otp-library.git) and submit a pull request.
 
 ## License
 This OTP library module is licensed under the MIT License.
-```
+
+ 
+ 
+ 
