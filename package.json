@@ -1,13 +1,18 @@
 {
 	"name": "otp-gen-val",
-	"version": "1.0.4",
-	"description": "An OTP generator and validator",
+	"version": "1.0.5",
+	"description": "An OTP generator and validator compatible with google, microsoft, saleforce authenticator apps",
 	"main": "index.js",
 	"module": "index.mjs",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"keywords": [],
+	"keywords": [
+		"otp",
+		"google-authenticator",
+		"microsoft-authenticator",
+		"saleforce-authenticator"
+	],
 	"author": "Alvin Kiptoo Chirchir <alvinchirchir1@gmail.com",
 	"license": "ISC",
 	"repository": {
