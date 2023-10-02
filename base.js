@@ -89,7 +89,7 @@ async function generateQRData(key, issuer, label, digits = 6, algorithm = "SHA1"
  * @throws {Error} If the 'key' parameter is missing, empty, or not a string.
  * @throws {Error} If the 'type' parameter is missing, empty, or not a string.
  */
-function generateOTP(key, type, counter = 30, codeDigits = 6, hmacAlgorithm = "sha1") {
+function generateOTP(key, type, counter = 30, codeDigits = 6, hmacAlgorithm = "sha1", window = 0) {
 	// Check if 'key' parameter is provided and non-empty string
 	if (!key) {
 		throw new Error("The 'key' parameter is required.");
@@ -107,7 +107,7 @@ function generateOTP(key, type, counter = 30, codeDigits = 6, hmacAlgorithm = "s
 	} else if (type === "totp") {
 		// Generate a TOTP and return it
 
-		return generateTOTP(key, counter, codeDigits, hmacAlgorithm);
+		return generateTOTP(key, counter, codeDigits, hmacAlgorithm, window);
 	} else {
 		// Invalid OTP type
 		throw new Error("Invalid OTP type. Use 'hotp' or 'totp'.");
@@ -130,7 +130,7 @@ function generateOTP(key, type, counter = 30, codeDigits = 6, hmacAlgorithm = "s
  * @throws {Error} If the 'key' parameter is missing, empty, or not a string.
  * @throws {Error} If the 'type' parameter is missing, empty, or not a string.
  */
-function validateOTP(userOTP, key, type='totp', counter = 30, codeDigits = 6, hmacAlgorithm = "sha1", window = 1) {
+function validateOTP(userOTP, key, type = "totp", counter = 30, codeDigits = 6, hmacAlgorithm = "sha1", window = 120) {
 	// Check if 'userOTP' parameter is provided, is a string, and is not empty
 	if (!userOTP) {
 		throw new Error("The 'userOTP' parameter is required.");
@@ -148,7 +148,7 @@ function validateOTP(userOTP, key, type='totp', counter = 30, codeDigits = 6, hm
 
 	// Iterate over the time window to validate OTPs
 	for (let i = -window; i <= window; i++) {
-		const expectedOTP = generateOTP(key, type, counter, codeDigits, hmacAlgorithm, counter + i);
+		const expectedOTP = generateOTP(key, type, counter, codeDigits, hmacAlgorithm, i);
 		if (userOTP === expectedOTP) {
 			return true;
 		}
@@ -159,8 +159,9 @@ function validateOTP(userOTP, key, type='totp', counter = 30, codeDigits = 6, hm
 }
 
 // Function to generate a TOTP (Time-Based One-Time Password)
-function generateTOTP(key, timeStep = 30, codeDigits = 6, hmacAlgorithm = "sha1") {
-	const currentUnixTime = Math.floor(Date.now() / 1000);
+function generateTOTP(key, timeStep = 30, codeDigits = 6, hmacAlgorithm = "sha1", window) {
+	let currentUnixTime = Math.floor(Date.now() / 1000);
+	currentUnixTime += window;
 	const counter = Math.floor(currentUnixTime / timeStep); // Calculate time-based counter
 	return generateHOTP(key, counter, codeDigits, hmacAlgorithm);
 }
@@ -179,5 +180,33 @@ function generateHOTP(key, counter, codeDigits = 6, hmacAlgorithm = "sha1") {
 	const paddedHOTP = hotp.toString().padStart(codeDigits, "0");
 	return paddedHOTP;
 }
+
+// Function to run the OTP generation and validation test
+async function runOTPGenerationValidationTest(counterDuration) {
+	let counter = 0;
+	const otp = generateOTP("JBSWY3DPEHPK3PXY", "totp");
+
+	// Set up an interval to generate and validate OTPs
+	const intervalId = setInterval(() => {
+		// Generate an OTP for the current counter value
+
+		// Validate the OTP
+		const isValid = validateOTP(otp, "JBSWY3DPEHPK3PXY", "totp");
+
+		// Log the results
+		console.log(`Counter: ${counter}, OTP: ${otp}, Validation: ${isValid ? "Valid" : "Invalid"}`);
+
+		// Increment the counter
+		counter++;
+
+		// Check if the test should end
+		if (counter > counterDuration) {
+			clearInterval(intervalId); // Stop the interval
+			console.log("Test complete.");
+		}
+	}, 1000); // Run every 1 second
+}
+
+runOTPGenerationValidationTest(200);
 
 module.exports = { generateKey, generateQRData, generateOTP, validateOTP };
