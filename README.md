@@ -100,6 +100,7 @@ console.log(isValid ? "Valid OTP" : "Invalid OTP");
 We would like to thank the following contributors for their valuable contributions to this project:
 
 - [Alvin Chirchir](https://github.com/alvinchirchir)
+- [Fred Mainga](https://github.com/fmainga)
 
 If you would like to contribute to this project, please [fork it on GitHub](https://github.com/alvinchirchir/otp-library.git) and submit a pull request.
 
